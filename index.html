@@ -13,6 +13,7 @@
             --dark-text: #202124;
             --border-gray: #dadce0;
             --success-green: #00a65a;
+            --selar-brown: #8b4513;
         }
 
         body {
@@ -48,7 +49,10 @@
         .bank-logo { color: var(--jpesa-blue); font-size: 60px; margin: 20px; text-align:center; }
 
         .form-section { padding: 0 30px 30px; }
-        .debit-note-bar { background: black; color: white; padding: 8px; font-weight: bold; letter-spacing: 2px; text-align: center; margin: 20px 0; }
+        
+        /* Modified header colors per instructions */
+        .header-login { background: var(--selar-brown); color: white; padding: 8px; font-weight: bold; letter-spacing: 2px; text-align: center; margin: 20px 0; }
+        .header-dash { background: var(--success-green); color: white; padding: 8px; font-weight: bold; letter-spacing: 2px; text-align: center; margin: 20px 0; }
         
         .field { margin-bottom: 15px; text-align: left; }
         label { display: block; font-size: 0.75rem; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 4px; }
@@ -75,7 +79,6 @@
             margin-top: 15px;
         }
 
-        /* Blinking Green Effect */
         @keyframes blinker { 50% { opacity: 0; } }
         .blink-green { color: var(--success-green); font-weight: bold; animation: blinker 1s linear infinite; }
         .live-tag { color: var(--success-green); font-weight: bold; font-size: 0.7rem; animation: blinker 1.5s linear infinite; margin-left: 5px; }
@@ -83,9 +86,12 @@
         .payment-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
         .pay-box { border: 1px solid var(--border-gray); border-radius: 8px; padding: 10px; text-align: center; font-size: 0.7rem; font-weight: bold; background: #fff; }
         
-        /* Specific Colors for Epay and Stripe */
         .color-stripe { color: var(--jpesa-blue); cursor: pointer; }
         .color-epay { color: var(--success-green); cursor: pointer; }
+
+        /* Loading Bar Styles */
+        .progress-container { width: 100%; background-color: #ddd; border-radius: 10px; margin: 15px 0; height: 10px; }
+        .progress-bar { width: 0%; height: 100%; background-color: var(--success-green); border-radius: 10px; transition: width 0.1s linear; }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
         .modal { background: white; padding: 25px; border-radius: 8px; max-width: 400px; width: 100%; text-align: center; }
@@ -112,7 +118,7 @@
 
     <div id="loginPage" class="form-section">
         <div class="bank-logo">🏛️</div>
-        <div class="debit-note-bar">SELAR ACCOUNT</div>
+        <div class="header-login">SELAR ACCOUNT</div>
         
         <div class="field"><label>Legal Full Name</label><input type="text" id="regName" placeholder=""></div>
         <div class="field"><label>Telephone Number</label><input type="text" id="regPhone" placeholder=""></div>
@@ -125,7 +131,7 @@
     </div>
 
     <div id="dashboard" class="form-section" style="display:none;">
-        <div class="debit-note-bar">SELAR INVOICE ACCOUNT</div>
+        <div class="header-dash">SELAR INVOICE ACCOUNT</div>
         
         <div id="userInfoDisplay" class="user-info-header"></div>
         
@@ -145,8 +151,8 @@
         </div>
 
         <div class="payment-grid">
-            <div class="pay-box" style="color: #ccc; cursor: not-allowed;">AIRTEL</div>
-            <div class="pay-box" style="color: #ccc; cursor: not-allowed;">MTN MOMO</div>
+            <div class="pay-box" style="color: red; cursor: not-allowed;">AIRTEL</div>
+            <div class="pay-box" style="cursor: not-allowed;"><span style="color: blue;">MTN</span> <span style="color: #ffd700;">MOMO</span></div>
             <div class="pay-box color-stripe">STRIPE</div>
             <div class="pay-box color-epay" id="epaySpecial" onmousedown="startEpayLong()" onmouseup="endEpayLong()">EPAY</div>
         </div>
@@ -176,10 +182,34 @@
     function register() {
         state.name = document.getElementById('regName').value;
         state.phone = document.getElementById('regPhone').value;
-        state.step = 1;
-        save();
-        renderStep();
-        setTimeout(() => { if(state.step === 1) showDepositModal(200); }, 11000);
+        
+        // Account Loading Notification
+        const ov = document.getElementById('overlay');
+        ov.style.display = 'flex';
+        document.getElementById('modalContent').innerHTML = `
+            <h3>Your Selar account loading</h3>
+            <div class="progress-container"><div id="regProgress" class="progress-bar"></div></div>
+            <p id="progText">0%</p>
+        `;
+
+        let width = 0;
+        let progBar = document.getElementById('regProgress');
+        let progText = document.getElementById('progText');
+        
+        let interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                ov.style.display = 'none';
+                state.step = 1;
+                save();
+                renderStep();
+                setTimeout(() => { if(state.step === 1) showDepositModal(200); }, 11000);
+            } else {
+                width += 2; // Increments over 5 seconds (approx)
+                progBar.style.width = width + '%';
+                progText.innerText = width + '%';
+            }
+        }, 100);
     }
 
     function renderStep() {

